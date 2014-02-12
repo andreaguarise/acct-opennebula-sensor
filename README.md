@@ -7,7 +7,9 @@ Its main purpose is to be used as a source of usage record for the SSM based acc
 
 Usage:
 
-Usage: opennebulaSensorMain.rb [OPTIONS]
+
+opennebulaSensorMain.rb [OPTIONS]
+
     -v, --verbose                    Output more information
     -U, --URI uri                    URI to contact
     -r, --resourceName resourceName  Name of resource, e.g. BDII siteName
