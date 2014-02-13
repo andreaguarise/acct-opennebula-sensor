@@ -139,6 +139,7 @@ class OneRecordActiveResource < LocalRecord
     r['networkOutBound'] = r['networkOutbound']
     r.delete('networkOutbound')
     r.delete('statusLiteral')
+    r.delete('statusSSM')
   end
   
   def post
@@ -150,11 +151,11 @@ class OneRecordActiveResource < LocalRecord
         tries += 1
         r.save
         if not r.valid?
-          puts r.errors.full_messages if options[:verbose]
-          recordBuff = CloudRecord.get(:search, :VMUUID => r.VMUUID )
-          newRecord = CloudRecord.find(recordBuff["id"])
-          newRecord.load(r.attributes)
-          newRecord.save
+          puts r.errors.full_messages # if options[:verbose]
+          #recordBuff = CloudRecord.get(:search, :VMUUID => r.VMUUID )
+          #newRecord = CloudRecord.find(recordBuff["id"])
+          #newRecord.load(r.attributes)
+          #newRecord.save
         end
       rescue Exception => e
         puts "Error sending  #{r.VMUUID}:#{e.to_s}. Retrying" # if options[:verbose]
