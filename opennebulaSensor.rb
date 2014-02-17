@@ -138,6 +138,7 @@ class OneRecordActiveResource < LocalRecord
     r.delete('resourceName')
     r['networkOutBound'] = r['networkOutbound']
     r.delete('networkOutbound')
+    r['status'] = r['statusLiteral']
     r.delete('statusLiteral')
     r.delete('statusSSM')
   end
