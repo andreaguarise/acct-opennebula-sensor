@@ -141,6 +141,8 @@ class OneRecordActiveResource < LocalRecord
     r['status'] = r['statusLiteral']
     r.delete('statusLiteral')
     r.delete('statusSSM')
+    r['hypervisor_hostname'] = r['hypervisorHostname']
+    r.delete('hypervisorHostname')
   end
   
   def post
@@ -357,6 +359,7 @@ class OpenNebulaJsonRecord
     ## VMUUID must be assured unique.
     buffer = @resourceName  + "/" + @jsonRecord["STIME"] + "/" +@jsonRecord["VM"]["ID"]
     rv['VMUUID'] = UUIDTools::UUID.md5_create(UUIDTools::UUID_DNS_NAMESPACE,buffer)
+    rv['hypervisorHostname'] = @jsonRecord["HOSTNAME"]
     rv['resourceName'] = @resourceName
     rv
   end
