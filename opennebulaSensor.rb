@@ -228,6 +228,7 @@ class OneImage
                 puts "host_params id:#{id} ==> size:#{size}"
                 @sizes[id] = size
     end
+    @sizes
   end
   
 end
