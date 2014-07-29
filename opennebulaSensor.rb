@@ -380,7 +380,7 @@ class OpenNebulaJsonRecord
           if disk["SIZE"]
             rv['diskSize'] += disk["SIZE"].to_i
           else
-            rv['diskSize'] += @oneImageSizes[disk["IMAGE_ID"]] if disk["IMAGE_ID"]
+            rv['diskSize'] += @oneImageSizes[disk["IMAGE_ID"]].to_i if disk["IMAGE_ID"]
           end 
         end
       else
