@@ -243,7 +243,7 @@ class OneacctFile
     records = []
     parsed = JSON.parse IO.read(@file)
     parsed["HISTORY_RECORDS"]["HISTORY"].each do |jsonRecord|
-      record = OpenNebulaJsonRecord.new(jsonRecord,sizes)
+      record = OpenNebulaJsonRecord.new(jsonRecord,@sizes)
       record.resourceName = @resourceName
       records << record.recordVector
     end
