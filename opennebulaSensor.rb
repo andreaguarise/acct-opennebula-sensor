@@ -1,11 +1,30 @@
 #!/usr/bin/ruby -w
+##############################################################################
+# Environment Configuration
+##############################################################################
+ONE_LOCATION=ENV["ONE_LOCATION"]
+
+if !ONE_LOCATION
+    RUBY_LIB_LOCATION="/usr/lib/one/ruby"
+else
+    RUBY_LIB_LOCATION=ONE_LOCATION+"/lib/ruby"
+end
+
+$: << RUBY_LIB_LOCATION
 
 require 'rubygems'
 require 'optparse'
 require 'active_resource'
+require 'opennebula'
+require 'rexml/document'
 require 'json'
 require 'dbi'
 require 'uuidtools'
+
+
+require 'mon_config'
+
+include OpenNebula
 
 class GenericResource < ActiveResource::Base
   self.format = :xml
@@ -21,6 +40,10 @@ class LocalRecord
   end
 end
 
+  def computeSize
+    
+  end
+
 class OneRecordSSM < LocalRecord
   
   def print(record)
@@ -34,7 +57,7 @@ class OneRecordSSM < LocalRecord
     "MachineName: " + record['localVMID'] + "\n" +
     "LocalUserId: " + record['local_user'] + "\n" +
     "LocalGroupId: " + record['local_group'] + "\n" +
-    "GlobaUserName: " + "" + "\n" +
+    "GlobalUserName: " + "" + "\n" +
     "FQAN: " + "" + "\n" +
     "Status: " + record['statusSSM']+ "\n" + 
     "StarTime: " + record['startTime'].to_i.to_s + "\n" +
@@ -139,6 +162,8 @@ class OneRecordActiveResource < LocalRecord
     r['networkOutBound'] = r['networkOutbound']
     r.delete('networkOutbound')
     r['status'] = r['statusLiteral']
+    r['disk'] = r['diskSize']
+    r.delete('diskSize')
     r.delete('statusLiteral')
     r.delete('statusSSM')
     r['hypervisor_hostname'] = r['hypervisorHostname']
@@ -174,17 +199,51 @@ class OneRecordActiveResource < LocalRecord
 
 end
 
+class OneImage
+  def initialize(c,e)
+    @oneCredentials = c
+    @oneEndpoint = e
+    @sizes = {}
+  end
+  
+  def sizes
+    @sizes
+  end 
+  
+  def getSizes
+    client = Client.new(@oneCredentials, @oneEndpoint )
+    img_pool = ImagePool.new(client)
+    rc = img_pool.info
+    if OpenNebula.is_error?(rc)
+     puts rc.message
+     exit(-1)
+    end
+
+    img_xml_doc = REXML::Document.new(img_pool.to_xml.to_s)
+    img_xml = REXML::XPath.match(img_xml_doc,'//IMAGE')
+    img_xml.each do |img|
+                img_doc=REXML::Document.new(img.to_s)
+                id = REXML::XPath.first(img_doc,"//ID").text
+                size = REXML::XPath.first(img_doc,"//SIZE").text
+                puts "host_params id:#{id} ==> size:#{size}"
+                @sizes[id] = size
+    end
+  end
+  
+end
+
 class OneacctFile
-  def initialize(file,resourceName)
+  def initialize(file,resourceName,sizes)
     @file = file
     @resourceName = resourceName
+    @sizes = sizes
   end
   
   def parse
     records = []
     parsed = JSON.parse IO.read(@file)
     parsed["HISTORY_RECORDS"]["HISTORY"].each do |jsonRecord|
-      record = OpenNebulaJsonRecord.new(jsonRecord)
+      record = OpenNebulaJsonRecord.new(jsonRecord,sizes)
       record.resourceName = @resourceName
       records << record.recordVector
     end
@@ -291,9 +350,11 @@ class OpenNebulaStatus
 end
 
 class OpenNebulaJsonRecord
-  def initialize(jsonRecord)
+  def initialize(jsonRecord, oneImageSizes)
     @jsonRecord = jsonRecord
+    @oneImageSizes = oneImageSizes
   end
+  
 
   def recordVector
     rv = {}
@@ -315,9 +376,15 @@ class OpenNebulaJsonRecord
         rv['diskImage'] = ""
         @jsonRecord["VM"]["TEMPLATE"]["DISK"].each do |disk|
           rv['diskImage'] += disk["IMAGE"] if disk["IMAGE"]
+          if disk["SIZE"]
+            rv['diskSize'] += disk["SIZE"].to_i
+          else
+            rv['diskSize'] += @oneImageSizes[disk["ID"]] if disk["ID"]
+          end 
         end
       else
         rv['diskImage'] = @jsonRecord["VM"]["TEMPLATE"]["DISK"]["IMAGE"] if @jsonRecord["VM"]["TEMPLATE"]["DISK"]["IMAGE"]
+        rv['diskSize'] += @oneImageSizes[@jsonRecord["VM"]["TEMPLATE"]["DISK"]["ID"]] if @jsonRecord["VM"]["TEMPLATE"]["DISK"]["ID"]      
       end
     end
     rv['endTime'] = Time.at(@jsonRecord["ETIME"].to_i).to_datetime
@@ -470,7 +537,9 @@ class OpennebulaSensor
   
   def main
     self.getLineParameters
-    f = OneacctFile.new(@options[:file],@options[:resourceName])
+    i = OneImage.new(ONE_CREDENTIALS,ONE_ENDPOINT)
+    sizes = i.getSizes
+    f = OneacctFile.new(@options[:file],@options[:resourceName],sizes)
     records = f.parse
     p = newPublisher(records)
     p.post
