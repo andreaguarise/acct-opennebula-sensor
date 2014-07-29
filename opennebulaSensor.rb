@@ -386,7 +386,7 @@ class OpenNebulaJsonRecord
         end
       else
         rv['diskImage'] = @jsonRecord["VM"]["TEMPLATE"]["DISK"]["IMAGE"] if @jsonRecord["VM"]["TEMPLATE"]["DISK"]["IMAGE"]
-        rv['diskSize'] += @oneImageSizes[@jsonRecord["VM"]["TEMPLATE"]["DISK"]["IMAGE_ID"]] if @jsonRecord["VM"]["TEMPLATE"]["DISK"]["IMAGE_ID"]      
+        rv['diskSize'] += @oneImageSizes[@jsonRecord["VM"]["TEMPLATE"]["DISK"]["IMAGE_ID"]].to_i if @jsonRecord["VM"]["TEMPLATE"]["DISK"]["IMAGE_ID"]      
       end
     end
     rv['endTime'] = Time.at(@jsonRecord["ETIME"].to_i).to_datetime
