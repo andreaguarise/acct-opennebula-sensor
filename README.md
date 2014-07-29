@@ -19,3 +19,8 @@ opennebulaSensorMain.rb [OPTIONS]
     -F, --File file                  File containing the output of oneacct --json command
     -t, --token token                Authorization token (needed only with FAUST ActiveResource backend). Must be requested to the service administrator
     -h, --help                       Print this screen
+
+
+
+The configuration for XML-RPC opennebula API credentials can be set in file mon_config.rb
+
