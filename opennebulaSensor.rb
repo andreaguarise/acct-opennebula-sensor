@@ -188,7 +188,8 @@ class OneRecordActiveResource < LocalRecord
       rescue Exception => e
         puts "Error sending  #{r.VMUUID}:#{e.to_s}. Retrying" # if options[:verbose]
         if ( tries < 2)
-          sleep(2**tries)
+          sleep(2**tries) 
+          
           retry
         else
           puts "Could not send record #{r.VMUUID}."
@@ -213,7 +214,7 @@ class OneImage
   def getSizes
     client = Client.new(@oneCredentials, @oneEndpoint )
     img_pool = ImagePool.new(client)
-    rc = img_pool.info
+    rc = img_pool.info_all
     if OpenNebula.is_error?(rc)
      puts rc.message
      exit(-1)
@@ -225,7 +226,7 @@ class OneImage
                 img_doc=REXML::Document.new(img.to_s)
                 id = REXML::XPath.first(img_doc,"//ID").text
                 size = REXML::XPath.first(img_doc,"//SIZE").text
-                puts "host_params id:#{id} ==> size:#{size}"
+                puts "image_id:#{id} ==> size:#{size}"
                 @sizes[id] = size
     end
     @sizes
