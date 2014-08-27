@@ -47,11 +47,11 @@ end
 class OneRecordSSM < LocalRecord
   
   def print(record)
-    if record['statusSSM'] == "completed"
-      endBuff = "EndTime: " + record['endTime'].to_i.to_s + "\n"
-    else
-      endBuff = ""
-    end
+    #if record['statusSSM'] == "completed"
+    #  endBuff = "EndTime: " + record['endTime'].to_i.to_s + "\n"
+    #else
+    #  endBuff = ""
+    #end
     "VMUUID: " + record['VMUUID'] + "\n" +
     "SiteName: " + record['resourceName'] + "\n" +
     "MachineName: " + record['localVMID'] + "\n" +
@@ -61,7 +61,7 @@ class OneRecordSSM < LocalRecord
     "FQAN: " + "" + "\n" +
     "Status: " + record['statusSSM']+ "\n" + 
     "StartTime: " + record['startTime'].to_i.to_s + "\n" +
-    endBuff +
+    "EndTime: " + record['endTime'].to_i.to_s + "\n" +
     "SuspendDuration: " + "" + "\n" +
     "WallDuration: " + record['wallDuration'].to_i.to_s + "\n" +
     "CpuDuration: " +  record['cpuDuration'].to_i.to_s + "\n" + #Check validity of this number! It is inferred from percentage of CPU consupmption
@@ -390,7 +390,6 @@ class OpenNebulaJsonRecord
         rv['diskSize'] += @oneImageSizes[@jsonRecord["VM"]["TEMPLATE"]["DISK"]["IMAGE_ID"]].to_i if @jsonRecord["VM"]["TEMPLATE"]["DISK"]["IMAGE_ID"]      
       end
     end
-    rv['endTime'] = Time.at(@jsonRecord["ETIME"].to_i).to_datetime
     #rv['globaluserName'] = @jsonRecord["e"]
     rv['localVMID'] = @jsonRecord["VM"]["ID"]
     rv['local_group'] = @jsonRecord["VM"]["GNAME"]
