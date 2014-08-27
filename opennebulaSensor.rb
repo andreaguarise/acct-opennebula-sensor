@@ -60,7 +60,7 @@ class OneRecordSSM < LocalRecord
     "GlobalUserName: " + "" + "\n" +
     "FQAN: " + "" + "\n" +
     "Status: " + record['statusSSM']+ "\n" + 
-    "StarTime: " + record['startTime'].to_i.to_s + "\n" +
+    "StartTime: " + record['startTime'].to_i.to_s + "\n" +
     endBuff +
     "SuspendDuration: " + "" + "\n" +
     "WallDuration: " + record['wallDuration'].to_i.to_s + "\n" +
