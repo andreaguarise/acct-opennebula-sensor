@@ -70,7 +70,7 @@ class OneRecordSSM < LocalRecord
     "NetworkInbound: " + record['networkInbound'] + "\n" +
     "NetworkOutbound: " + record['networkOutbound'] + "\n" +
     "Memory: " + record['memory'] + "\n" +
-    "Disk: " + "" + "\n" +
+    "Disk: " + record['diskSize'] + "\n" +
     "StorageRecordId: " + "" + "\n" +
     "ImageId: " + record['diskImage'] + "\n" +
     "CloudType: " + "OpenNebula" + "\n" + "%%\n"
