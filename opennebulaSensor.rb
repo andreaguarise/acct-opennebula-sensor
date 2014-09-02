@@ -161,7 +161,7 @@ class OneRecordActiveResource < LocalRecord
     r.delete('resourceName')
     r['networkOutBound'] = r['networkOutbound']
     r.delete('networkOutbound')
-    r['status'] = r['statusLiteral']
+    r['status'] = r['statusSSM']
     r['disk'] = r['diskSize']
     r.delete('diskSize')
     r.delete('statusLiteral')
