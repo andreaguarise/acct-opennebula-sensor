@@ -374,6 +374,7 @@ class OpenNebulaJsonRecord
     #rv['cpuDuration'] = @jsonRecord["VM"]
     #rv['Disk'] = @jsonRecord['e']
     rv['diskSize'] = 0
+    rv['diskImage'] = ""
     if @jsonRecord["VM"]["TEMPLATE"]["DISK"]
       if @jsonRecord["VM"]["TEMPLATE"]["DISK"].kind_of?(Array)
         rv['diskImage'] = ""
