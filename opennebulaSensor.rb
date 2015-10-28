@@ -427,7 +427,9 @@ class OpenNebulaJsonRecord
     rv['wallDuration'] = rv['endTime'].to_i - rv['startTime'].to_i
     rv['cpuDuration'] = rv['wallDuration'].to_f*rv['cpuPercentageNormalized']
     ## VMUUID must be assured unique.
-    buffer = @resourceName  + "/" + @jsonRecord["STIME"] + "/" +@jsonRecord["VM"]["ID"]
+    ## Removed startTime to VMUUID as a workaround to opennebula db corrupted after multiple powercut
+    #buffer = @resourceName  + "/" + @jsonRecord["STIME"] + "/" +@jsonRecord["VM"]["ID"]
+    buffer = @resourceName  +  "/" +@jsonRecord["VM"]["ID"]
     rv['VMUUID'] = UUIDTools::UUID.md5_create(UUIDTools::UUID_DNS_NAMESPACE,buffer)
     rv['hypervisorHostname'] = @jsonRecord["HOSTNAME"]
     rv['resourceName'] = @resourceName
