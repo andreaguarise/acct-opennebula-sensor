@@ -336,17 +336,18 @@ class OpenNebulaStatus
       'CANCEL',
       'FAILURE',
       'CLEANUP']
-    s = case 
-    when started.include?(self.to_s) 
-      "started"
-    when suspended.include?(self.to_s)
-      "suspended"
-    when completed.include?(self.to_s)
-      "completed"
-    else
-      "one:#{self.to_s}"
-    end
-    s
+    #s = case 
+    #when started.include?(self.to_s) 
+    #  "started"
+    #when suspended.include?(self.to_s)
+    #  "suspended"
+    #when completed.include?(self.to_s)
+    #  "completed"
+    #else
+    #  "one:#{self.to_s}"
+    #end
+    #s
+    self.to_s
   end
   
 end
